@@ -26,7 +26,7 @@ def extract_color(v):
             if k in v:
                 return extract_color(v[k])
         if all(k in v for k in ("red", "green", "blue")):
-            return "#%02x%02x%02x" % (int(v["red"]), int(v["green"]), int(v["blue"]))
+            return "#%02x%02x%02x" % (int(v["red"]), int(v["blue"]), int(v["green"]))
         if "default" in v:
             return extract_color(v["default"])
     return None
@@ -95,7 +95,7 @@ if conf_src.exists():
     rendered_conf = re.sub(r"\{\{\s*([^}]+?)\s*\}\}", repl, raw)
     (stage_dir / "themy.conf").write_text(rendered_conf, encoding="utf-8")
 
-# 2. Render Themy.colors (KDE color-scheme for Dolphin)
+# 2. Render theme.colors (single KDE color-scheme for Dolphin)
 c_surface = hex_to_rgb(lookup("surface") or lookup("background"), "19,19,19" if mode == "dark" else "250,250,250")
 c_surface_container_low = hex_to_rgb(lookup("surface_container_low"), "27,27,27" if mode == "dark" else "240,240,240")
 c_surface_container = hex_to_rgb(lookup("surface_container"), "31,31,31" if mode == "dark" else "235,235,235")
@@ -111,8 +111,8 @@ kde_content = f"""[KDE]
 contrast=4
 
 [General]
-ColorScheme=themyMatugen
-Name=themy Shell (matugen)
+ColorScheme=theme
+Name=theme
 
 [ColorEffects:Disabled]
 Color={c_on_surface_variant}
@@ -255,6 +255,5 @@ inactiveBlend={c_on_surface_variant}
 inactiveForeground={c_on_surface_variant}
 """
 
-(stage_dir / "Themy.colors").write_text(kde_content, encoding="utf-8")
-(stage_dir / "themyMatugen.colors").write_text(kde_content, encoding="utf-8")
+(stage_dir / "theme.colors").write_text(kde_content, encoding="utf-8")
 (stage_dir / ".module-ok").write_text("ok\n", encoding="utf-8")

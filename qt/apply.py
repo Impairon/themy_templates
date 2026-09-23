@@ -6,6 +6,15 @@ stage_dir = Path(os.environ.get("THEMY_STAGE_DIR", "/tmp/themy-stage"))
 config_home = Path(os.environ.get("THEMY_XDG_CONFIG_HOME") or os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
 data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
 
+def run_optional(cmd):
+    """Run an optional command safely without crashing if missing or failing."""
+    if not cmd or not shutil.which(cmd[0]):
+        return
+    try:
+        subprocess.run(cmd, capture_output=True, check=False)
+    except Exception:
+        pass
+
 # 1. Update qt5ct / qt6ct
 themy_conf = stage_dir / "themy.conf"
 if themy_conf.exists():
@@ -37,16 +46,29 @@ if themy_conf.exists():
             cfg_file.parent.mkdir(parents=True, exist_ok=True)
             cfg_file.write_text("\n".join(lines[:i+1] + body + lines[end:]) + "\n", encoding="utf-8")
 
-# 2. Install to KDE / Dolphin color-schemes directory
+# 2. Install single theme.colors to KDE / Dolphin color-schemes directory
 scheme_dir = data_home / "color-schemes"
 scheme_dir.mkdir(parents=True, exist_ok=True)
 
-themy_colors = stage_dir / "Themy.colors"
+themy_colors = stage_dir / "theme.colors"
+if not themy_colors.exists():
+    for alt in ("Themy.colors", "themyMatugen.colors"):
+        if (stage_dir / alt).exists():
+            themy_colors = stage_dir / alt
+            break
+
 if themy_colors.exists():
-    # Install as Themy.colors, themyMatugen.colors, and themy.colors for Dolphin & KDE
-    for dest_name in ("Themy.colors", "themyMatugen.colors", "themy.colors"):
-        shutil.copy2(themy_colors, scheme_dir / dest_name)
-    print(f"[qt] Exported KDE color scheme to {scheme_dir / 'Themy.colors'}")
+    dest_file = scheme_dir / "theme.colors"
+    shutil.copy2(themy_colors, dest_file)
+    # Remove older redundant duplicates so directory stays completely clean
+    for legacy in ("Themy.colors", "themyMatugen.colors", "themy.colors"):
+        legacy_path = scheme_dir / legacy
+        if legacy_path.exists() and legacy_path.name != "theme.colors":
+            try:
+                legacy_path.unlink()
+            except OSError:
+                pass
+    print(f"[qt] Exported KDE color scheme to {dest_file}")
 
 # 3. Update ~/.config/kdeglobals so Dolphin immediately loads the scheme
 kdeglobals = config_home / "kdeglobals"
@@ -63,15 +85,15 @@ body = lines[i+1:end]
 found = False
 for j, l in enumerate(body):
     if l.startswith("ColorScheme="):
-        body[j] = "ColorScheme=themyMatugen"
+        body[j] = "ColorScheme=theme"
         found = True
         break
 if not found:
-    body.append("ColorScheme=themyMatugen")
+    body.append("ColorScheme=theme")
 
 kdeglobals.parent.mkdir(parents=True, exist_ok=True)
 kdeglobals.write_text("\n".join(lines[:i+1] + body + lines[end:]) + "\n", encoding="utf-8")
-print(f"[qt] Set ColorScheme=themyMatugen in {kdeglobals}")
+print(f"[qt] Set ColorScheme=theme in {kdeglobals}")
 
 # 4. Environment variables
 envdir = config_home / "environment.d"
@@ -90,5 +112,5 @@ if qt6_active:
 envfile.write_text("\n".join(env_lines) + "\n", encoding="utf-8")
 
 if qt5_active or qt6_active:
-    subprocess.run(["systemctl", "--user", "import-environment", "QT_QPA_PLATFORMTHEME", "QT_QPA_PLATFORMTHEME_QT6"], capture_output=True)
-    subprocess.run(["dbus-update-activation-environment", "--systemd", "QT_QPA_PLATFORMTHEME", "QT_QPA_PLATFORMTHEME_QT6"], capture_output=True)
+    run_optional(["systemctl", "--user", "import-environment", "QT_QPA_PLATFORMTHEME", "QT_QPA_PLATFORMTHEME_QT6"])
+    run_optional(["dbus-update-activation-environment", "--systemd", "QT_QPA_PLATFORMTHEME", "QT_QPA_PLATFORMTHEME_QT6"])

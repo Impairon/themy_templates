@@ -9,5 +9,4 @@ save "$c/qt6ct/qt6ct.conf" qt6-config
 save "$c/qt6ct/colors/themy.conf" qt6-colors
 save "$c/environment.d/themy.conf" env
 save "$c/kdeglobals" kdeglobals
-save "$d/color-schemes/Themy.colors" kde-themy-colors
-save "$d/color-schemes/themyMatugen.colors" kde-matugen-colors
+save "$d/color-schemes/theme.colors" kde-theme-colors

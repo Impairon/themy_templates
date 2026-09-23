@@ -14,5 +14,4 @@ restore "$c/qt6ct/qt6ct.conf" qt6-config
 restore "$c/qt6ct/colors/themy.conf" qt6-colors
 restore "$c/environment.d/themy.conf" env
 restore "$c/kdeglobals" kdeglobals
-restore "$d/color-schemes/Themy.colors" kde-themy-colors
-restore "$d/color-schemes/themyMatugen.colors" kde-matugen-colors
+restore "$d/color-schemes/theme.colors" kde-theme-colors
