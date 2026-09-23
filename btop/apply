@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODULE_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+STAGE="${THEMY_STAGE_DIR:-}"
+
+BTOP_DIR="${BTOP_CONFIG_HOME:-${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}/btop}"
+mkdir -p "$BTOP_DIR/themes"
+
+THEME_SRC=""
+if [[ -n "$STAGE" && -f "$STAGE/themy.theme" ]]; then
+  THEME_SRC="$STAGE/themy.theme"
+elif [[ -f "$MODULE_DIR/themy.theme" ]]; then
+  THEME_SRC="$MODULE_DIR/themy.theme"
+fi
+
+if [[ -n "$THEME_SRC" && -f "$THEME_SRC" ]]; then
+  cp -f -- "$THEME_SRC" "$BTOP_DIR/themes/themy.theme"
+  cp -f -- "$THEME_SRC" "$BTOP_DIR/themy.theme"
+fi
+
+python3 "$MODULE_DIR/apply.py" "$BTOP_DIR/btop.conf" "$MODULE_DIR/templates/btop.conf"

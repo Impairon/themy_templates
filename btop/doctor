@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v btop >/dev/null 2>&1; then
+  printf '  OK   %-14s %s
+' Btop "$(command -v btop)"
+else
+  printf '  INFO %-14s btop not installed
+' Btop
+fi

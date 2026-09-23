@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 save(){ local s="$1" k="$2"; if [[ -e "$s" || -L "$s" ]]; then cp -a "$s" "$THEMY_BACKUP_DIR/$k"; else : > "$THEMY_BACKUP_DIR/$k.missing"; fi; }
-c="$THEMY_XDG_CONFIG_HOME"; save "$c/qt5ct/qt5ct.conf" qt5-config; save "$c/qt5ct/colors/themy.conf" qt5-colors; save "$c/qt6ct/qt6ct.conf" qt6-config; save "$c/qt6ct/colors/themy.conf" qt6-colors; save "$c/environment.d/themy.conf" env
+c="${THEMY_XDG_CONFIG_HOME:-$HOME/.config}"
+d="${XDG_DATA_HOME:-$HOME/.local/share}"
+save "$c/qt5ct/qt5ct.conf" qt5-config
+save "$c/qt5ct/colors/themy.conf" qt5-colors
+save "$c/qt6ct/qt6ct.conf" qt6-config
+save "$c/qt6ct/colors/themy.conf" qt6-colors
+save "$c/environment.d/themy.conf" env
+save "$c/kdeglobals" kdeglobals
+save "$d/color-schemes/Themy.colors" kde-themy-colors
+save "$d/color-schemes/themyMatugen.colors" kde-matugen-colors

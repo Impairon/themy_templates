@@ -1,35 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-atomic(){ local s="$1" d="$2" t; mkdir -p "$(dirname "$d")"; t="$(mktemp "$(dirname "$d")/.themy.XXXXXX")"; cp "$s" "$t"; mv -f "$t" "$d"; }
-update(){ local cfg="$1" pal="$2"; python3 - "$cfg" "$pal" <<'PY'
-from pathlib import Path
-import sys
-p=Path(sys.argv[1]); pal=sys.argv[2]; lines=p.read_text(encoding='utf-8').splitlines() if p.exists() else []
-try: i=next(i for i,l in enumerate(lines) if l.strip()=='[Appearance]')
-except StopIteration:
-    if lines and lines[-1].strip(): lines.append('')
-    lines.append('[Appearance]'); i=len(lines)-1
-end=next((j for j in range(i+1,len(lines)) if lines[j].startswith('[')),len(lines)); body=lines[i+1:end]
-for k,v in [('custom_palette','true'),('color_scheme_path',pal)]:
-    for j,l in enumerate(body):
-        if l.startswith(k+'='): body[j]=f'{k}={v}'; break
-    else: body.append(f'{k}={v}')
-p.parent.mkdir(parents=True,exist_ok=True); p.write_text('\n'.join(lines[:i+1]+body+lines[end:])+'\n',encoding='utf-8')
-PY
-}
-for qt in qt5ct qt6ct; do cfg="$THEMY_XDG_CONFIG_HOME/$qt/$qt.conf"; if command -v "$qt" >/dev/null 2>&1 || [[ -f "$cfg" ]]; then pal="$THEMY_XDG_CONFIG_HOME/$qt/colors/themy.conf"; atomic "$THEMY_STAGE_DIR/themy.conf" "$pal"; update "$cfg" "$pal"; fi; done
-envdir="$THEMY_XDG_CONFIG_HOME/environment.d"; envfile="$envdir/themy.conf"; mkdir -p "$envdir"; : > "$envfile"
-qt5_active=0; qt6_active=0
-command -v qt5ct >/dev/null 2>&1 && qt5_active=1
-command -v qt6ct >/dev/null 2>&1 && qt6_active=1
-if ((qt5_active || qt6_active)); then
-  printf '%s\n' '# Themy Qt backend selection' >> "$envfile"
-  ((qt5_active)) && printf '%s\n' 'QT_QPA_PLATFORMTHEME=qt5ct' >> "$envfile"
-  ((qt6_active)) && printf '%s\n' 'QT_QPA_PLATFORMTHEME_QT6=qt6ct' >> "$envfile"
-fi
-((qt5_active)) && export QT_QPA_PLATFORMTHEME=qt5ct || true
-((qt6_active)) && export QT_QPA_PLATFORMTHEME_QT6=qt6ct || true
-if ((qt5_active || qt6_active)); then
-  systemctl --user import-environment QT_QPA_PLATFORMTHEME QT_QPA_PLATFORMTHEME_QT6 >/dev/null 2>&1 || true
-  dbus-update-activation-environment --systemd QT_QPA_PLATFORMTHEME QT_QPA_PLATFORMTHEME_QT6 >/dev/null 2>&1 || true
-fi
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 "$DIR/apply.py"

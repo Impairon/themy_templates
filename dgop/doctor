@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v dgop >/dev/null 2>&1; then
+  printf '  OK   %-14s %s
+' dgop "$(command -v dgop)"
+elif [[ -d "${XDG_CONFIG_HOME:-$HOME/.config}/dgop" ]]; then
+  printf '  OK   %-14s %s
+' dgop "~/.config/dgop (config found)"
+else
+  printf '  INFO %-14s dgop not installed (will apply when installed)
+' dgop
+fi

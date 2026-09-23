@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export THEMY_MODULE_DIR="${THEMY_MODULE_DIR:-$DIR}"
-python3 "$DIR/render.py"
+python3 "$DIR/apply.py"
