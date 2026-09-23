@@ -6,5 +6,12 @@ restore(){
   if [[ -f "$THEMY_BACKUP_DIR/$k.missing" ]]; then rm -f "$d"
   elif [[ -e "$s" || -L "$s" ]]; then mkdir -p "$(dirname "$d")"; rm -rf "$d"; cp -a "$s" "$d"; fi
 }
-c="$THEMY_XDG_CONFIG_HOME"
-restore "$c/qt5ct/qt5ct.conf" qt5-config; restore "$c/qt5ct/colors/themy.conf" qt5-colors; restore "$c/qt6ct/qt6ct.conf" qt6-config; restore "$c/qt6ct/colors/themy.conf" qt6-colors; restore "$c/environment.d/themy.conf" env
+c="${THEMY_XDG_CONFIG_HOME:-$HOME/.config}"
+d="${XDG_DATA_HOME:-$HOME/.local/share}"
+restore "$c/qt5ct/qt5ct.conf" qt5-config
+restore "$c/qt5ct/colors/themy.conf" qt5-colors
+restore "$c/qt6ct/qt6ct.conf" qt6-config
+restore "$c/qt6ct/colors/themy.conf" qt6-colors
+restore "$c/environment.d/themy.conf" env
+restore "$c/kdeglobals" kdeglobals
+restore "$d/color-schemes/theme.colors" kde-theme-colors

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BTOP_DIR="${BTOP_CONFIG_HOME:-${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}/btop}"
+BACKUP="${THEMY_BACKUP_DIR:-}"
+
+[[ -n "$BACKUP" ]] || exit 0
+mkdir -p "$BACKUP"
+
+save_file(){
+  local src="$1" key="$2"
+  if [[ -f "$src" ]]; then
+    cp -a -- "$src" "$BACKUP/$key"
+  else
+    : > "$BACKUP/$key.missing"
+  fi
+}
+
+save_file "$BTOP_DIR/themes/themy.theme" theme
+save_file "$BTOP_DIR/themy.theme" root_theme
+save_file "$BTOP_DIR/btop.conf" conf

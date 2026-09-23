@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+backup_dir="${THEMY_BACKUP_DIR:-/tmp/themy-backup}"
+cfg_dir="${DGOP_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}/dgop}"
+dst="$cfg_dir/colors.json"
+
+if [[ -f "$backup_dir/colors.json.missing" ]]; then
+  rm -f -- "$dst"
+elif [[ -f "$backup_dir/colors.json" ]]; then
+  mkdir -p "$cfg_dir"
+  cp -a -- "$backup_dir/colors.json" "$dst"
+fi
