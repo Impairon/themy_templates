@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Themy Hook: apply
+# ------------------------------------------------------------------------------
+# Copies the rendered files from $THEMY_STAGE_DIR into the real application
+# config directories. Optionally reloads or signals the running application.
+#
+# Available Environment Variables:
+#   THEMY_STAGE_DIR       : Directory containing the successfully rendered files
+#   THEMY_XDG_CONFIG_HOME : User config directory (defaults to $HOME/.config)
+#   XDG_DATA_HOME         : User data directory (defaults to $HOME/.local/share)
+# ==============================================================================
+set -euo pipefail
+
+STAGE_DIR="${THEMY_STAGE_DIR:-/tmp/themy-stage}"
+CONFIG_HOME="${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}"
+TARGET_DIR="$CONFIG_HOME/example"
+
+mkdir -p "$TARGET_DIR"
+
+if [[ -f "$STAGE_DIR/example.conf" ]]; then
+    cp -a "$STAGE_DIR/example.conf" "$TARGET_DIR/config.conf"
+    echo "[example] Updated $TARGET_DIR/config.conf"
+fi
+
+# Optional: Notify/reload the application if running
+# if pgrep -x example-app >/dev/null 2>&1; then
+#     example-app --reload-theme || true
+# fi

@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Themy Hook: render
+# ------------------------------------------------------------------------------
+# Called during 'themy apply' or 'themy render'.
+# Responsible for taking templates, substituting palette colors, and writing
+# the rendered configuration files into $THEMY_STAGE_DIR.
+#
+# Available Environment Variables:
+#   THEMY_STAGE_DIR   : Directory where rendered files must be placed
+#   THEMY_PALETTE     : Path to the generated Matugen palette JSON file
+#   THEMY_MODE        : Active mode ("dark" or "light")
+#   THEMY_MODULE_DIR  : Path to this module's directory
+#   THEMY_ROOT        : Root path of the Themy installation
+# ==============================================================================
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export THEMY_MODULE_DIR="${THEMY_MODULE_DIR:-$DIR}"
+export THEMY_STAGE_DIR="${THEMY_STAGE_DIR:-/tmp/themy-stage}"
+export THEMY_MODE="${THEMY_MODE:-dark}"
+
+mkdir -p "$THEMY_STAGE_DIR"
+
+TEMPLATE_SRC="$THEMY_MODULE_DIR/templates/${THEMY_MODE}.conf"
+OUTPUT_DEST="$THEMY_STAGE_DIR/example.conf"
+
+# Prefer Themy's built-in template renderer if available, or fall back to self-contained Python
+if [[ -n "${THEMY_ROOT:-}" && -x "$THEMY_ROOT/internals/render-template.py" ]]; then
+    "$THEMY_ROOT/internals/render-template.py" "$TEMPLATE_SRC" "$OUTPUT_DEST" "${THEMY_PALETTE:-}"
+else
+    python3 - <<'PYRENDER'
+import os, sys, json, re
+from pathlib import Path
+
+stage_dir = Path(os.environ.get("THEMY_STAGE_DIR", "/tmp/themy-stage"))
+mod_dir = Path(os.environ.get("THEMY_MODULE_DIR", "."))
+mode = os.environ.get("THEMY_MODE", "dark")
+palette_file = os.environ.get("THEMY_PALETTE", "")
+
+data = {}
+if palette_file and Path(palette_file).exists():
+    try:
+        data = json.loads(Path(palette_file).read_text(encoding="utf-8"))
+    except Exception:
+        pass
+
+def extract(v):
+    if isinstance(v, str): return v.strip() if v.startswith("#") else "#" + v.strip()
+    if isinstance(v, dict):
+        for k in ("hex", "color", "default"):
+            if k in v: return extract(v[k])
+    return None
+
+def lookup(key):
+    # Search structured JSON or direct roles
+    parts = key.strip().split(".")
+    cur = data
+    found = True
+    for p in parts:
+        if isinstance(cur, dict) and p in cur: cur = cur[p]
+        else: found = False; break
+    if found and cur is not None:
+        c = extract(cur)
+        if c: return c
+    role = [p for p in parts if p not in ("colors", "default", "hex")][-1]
+    # Check mode bucket
+    colors = data.get("colors", {}) if isinstance(data, dict) else {}
+    if isinstance(colors, dict) and mode in colors and isinstance(colors[mode], dict):
+        if role in colors[mode]:
+            c = extract(colors[mode][role])
+            if c: return c
+    # Fallback to dark/light defaults if missing
+    defaults = {
+        "surface": "#121212" if mode == "dark" else "#f8f9fa",
+        "on_surface": "#e0e0e0" if mode == "dark" else "#1a1a1a",
+        "primary": "#8ab4f8" if mode == "dark" else "#1a73e8",
+        "secondary": "#c58af9" if mode == "dark" else "#7627bb",
+        "outline": "#5f6368" if mode == "dark" else "#dadce0",
+        "error": "#f28b82" if mode == "dark" else "#d93025"
+    }
+    return defaults.get(role, "#888888")
+
+tpl = (mod_dir / f"templates/{mode}.conf").read_text(encoding="utf-8")
+rendered = re.sub(r"\{\{\s*([^}]+?)\s*\}\}", lambda m: lookup(m.group(1)), tpl)
+(stage_dir / "example.conf").write_text(rendered, encoding="utf-8")
+PYRENDER
+fi
+
+# Signal to Themy that this module rendered successfully
+printf 'ok
+' > "$THEMY_STAGE_DIR/.module-ok"

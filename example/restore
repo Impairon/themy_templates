@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Themy Hook: restore
+# ------------------------------------------------------------------------------
+# Called if 'apply' aborts or when the user invokes 'themy restore'.
+# Reverses changes using the files saved in $THEMY_BACKUP_DIR.
+# ==============================================================================
+set -euo pipefail
+
+CONFIG_HOME="${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}"
+TARGET_FILE="$CONFIG_HOME/example/config.conf"
+BACKUP_ITEM="$THEMY_BACKUP_DIR/example-config"
+
+if [[ -f "$BACKUP_ITEM.missing" ]]; then
+    rm -f "$TARGET_FILE"
+elif [[ -e "$BACKUP_ITEM" || -L "$BACKUP_ITEM" ]]; then
+    mkdir -p "$(dirname "$TARGET_FILE")"
+    cp -a "$BACKUP_ITEM" "$TARGET_FILE"
+fi

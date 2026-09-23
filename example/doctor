@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Themy Hook: doctor
+# ------------------------------------------------------------------------------
+# Called by 'themy doctor'. Tests whether required commands, libraries, or
+# configuration targets exist and prints aligned diagnostic messages.
+# Format:
+#   printf '  OK   %-14s %s\n' "<Feature>" "<Path or details>"
+#   printf '  WARN %-14s %s\n' "<Feature>" "<Notice>"
+# ==============================================================================
+set -euo pipefail
+
+CONFIG_HOME="${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}"
+
+if command -v example-app >/dev/null 2>&1; then
+    printf '  OK   %-14s %s\n' "example-app" "$(command -v example-app)"
+else
+    printf '  INFO %-14s %s\n' "example-app" "Optional CLI not in PATH (target config: $CONFIG_HOME/example)"
+fi
+
+printf '  OK   %-14s %s\n' "target config" "$CONFIG_HOME/example/config.conf"

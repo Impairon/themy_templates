@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Themy Hook: backup
+# ------------------------------------------------------------------------------
+# Called before applying new theme files. Must back up any user file that
+# 'apply' might modify or overwrite, so rollback can happen if apply fails.
+#
+# Available Environment Variables:
+#   THEMY_BACKUP_DIR      : Dedicated rollback folder created by Themy for this run
+#   THEMY_XDG_CONFIG_HOME : User config directory (defaults to $HOME/.config)
+# ==============================================================================
+set -euo pipefail
+
+CONFIG_HOME="${THEMY_XDG_CONFIG_HOME:-${XDG_CONFIG_HOME:-$HOME/.config}}"
+TARGET_FILE="$CONFIG_HOME/example/config.conf"
+
+if [[ -e "$TARGET_FILE" || -L "$TARGET_FILE" ]]; then
+    cp -a "$TARGET_FILE" "$THEMY_BACKUP_DIR/example-config"
+else
+    # Record that the file did not exist before so restore can remove it cleanly
+    : > "$THEMY_BACKUP_DIR/example-config.missing"
+fi
