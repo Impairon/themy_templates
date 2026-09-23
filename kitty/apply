@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="${KITTY_CONFIG_DIRECTORY:-${THEMY_XDG_CONFIG_HOME:-$HOME/.config}/kitty}"
+theme="$root/theme.conf"
+kitty_conf="$root/kitty.conf"
+
+mkdir -p "$root"
+cp -- "$THEMY_STAGE_DIR/theme.conf" "$theme"
+
+# Themy owns the theme file, but never owns the user's font configuration.
+# Make Kitty load the Themy theme from the user's normal kitty.conf.
+if [[ -f "$kitty_conf" ]]; then
+    if ! grep -Eq '^[[:space:]]*include[[:space:]]+theme\.conf([[:space:]]|$)' "$kitty_conf"; then
+        printf '\n# Themy theme\ninclude theme.conf\n' >> "$kitty_conf"
+    fi
+else
+    cat > "$kitty_conf" <<'EOF2'
+# Kitty configuration
+# Add your preferred font settings here, for example:
+# font_family Your Font Name
+# font_size 14.0
+
+# Themy theme
+include theme.conf
+EOF2
+fi
+
+printf 'Kitty theme written to %s\n' "$theme"
+printf 'Kitty now includes %s\n' "$theme"

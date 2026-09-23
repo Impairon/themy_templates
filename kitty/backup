@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="${KITTY_CONFIG_DIRECTORY:-${THEMY_XDG_CONFIG_HOME:-$HOME/.config}/kitty}"
+
+for name in theme kitty.conf; do
+    src="$root/$name"
+    if [[ -e "$src" || -L "$src" ]]; then
+        cp -a -- "$src" "$THEMY_BACKUP_DIR/$name"
+    else
+        : > "$THEMY_BACKUP_DIR/$name.missing"
+    fi
+done

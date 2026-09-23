@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+"$THEMY_ROOT/internals/render-template.py"   "$THEMY_MODULE_DIR/templates/kitty.conf"   "$THEMY_STAGE_DIR/theme.conf"   "$THEMY_PALETTE"
+printf 'ok\n' > "$THEMY_STAGE_DIR/.module-ok"
