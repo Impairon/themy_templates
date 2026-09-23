@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v qt5ct >/dev/null 2>&1 || [[ -f "$THEMY_XDG_CONFIG_HOME/qt5ct/qt5ct.conf" ]]; then printf '  OK   %-14s qt5ct available/configured\n' Qt5; else printf '  INFO %-14s qt5ct not installed\n' Qt5; fi
+if command -v qt6ct >/dev/null 2>&1 || [[ -f "$THEMY_XDG_CONFIG_HOME/qt6ct/qt6ct.conf" ]]; then printf '  OK   %-14s qt6ct available/configured\n' Qt6; else printf '  INFO %-14s qt6ct not installed\n' Qt6; fi

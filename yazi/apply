@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root="${YAZI_CONFIG_HOME:-$THEMY_XDG_CONFIG_HOME/yazi}"
+flavor="$root/flavors/themy.yazi"
+mkdir -p "$flavor"
+cp -- "$THEMY_STAGE_DIR/flavor.toml" "$flavor/flavor.toml"
+cp -- "$THEMY_STAGE_DIR/tmtheme.xml" "$flavor/tmtheme.xml"
+selector="$root/theme.toml"
+python3 - "$selector" "$THEMY_MODE" <<'PY'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1]); key='dark' if sys.argv[2]=='dark' else 'light'
+lines=p.read_text(encoding='utf-8').splitlines() if p.exists() else []
+out=[]; inside=False; seen=False
+for line in lines:
+    s=line.strip()
+    if s=='[flavor]': inside=True; out.append(line); continue
+    if inside and s.startswith('['):
+        if not seen: out.append(f'{key} = "themy"')
+        inside=False
+    if inside and s.startswith(key+' ='): out.append(f'{key} = "themy"'); seen=True; continue
+    out.append(line)
+if not any(x.strip()=='[flavor]' for x in out): out += ['', '[flavor]', f'{key} = "themy"']
+elif inside and not seen: out.append(f'{key} = "themy"')
+p.parent.mkdir(parents=True,exist_ok=True); p.write_text('\n'.join(out)+'\n',encoding='utf-8')
+PY

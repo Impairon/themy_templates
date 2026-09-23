@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+src="$THEMY_MODULE_DIR/templates/${THEMY_MODE}.css"
+"$THEMY_ROOT/internals/render-template.py" "$src" "$THEMY_STAGE_DIR/themy-colors.css" "$THEMY_PALETTE"
+
+if [[ -f "$THEMY_MODULE_DIR/templates/widgets.css" ]]; then
+  cp "$THEMY_MODULE_DIR/templates/widgets.css" "$THEMY_STAGE_DIR/themy-widgets.css"
+fi
+
+printf 'ok\n' > "$THEMY_STAGE_DIR/.module-ok"

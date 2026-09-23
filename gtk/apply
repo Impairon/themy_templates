@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config="$THEMY_XDG_CONFIG_HOME"
+data="$THEMY_XDG_DATA_HOME"
+theme_root="$data/themes"
+
+find_theme_source(){
+  local variant="$1" candidate
+  local target_name
+  [[ "$variant" == dark ]] && target_name="adw-gtk3-dark" || target_name="adw-gtk3"
+
+  for candidate in "$theme_root/$target_name" "$HOME/.themes/$target_name" "$config/themes/$target_name" \
+                   "/usr/local/share/themes/$target_name" "/usr/share/themes/$target_name"; do
+    if [[ -f "$candidate/gtk-3.0/gtk.css" && -f "$candidate/gtk-4.0/gtk.css" ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  for candidate in "$theme_root/adw-gtk3" "$HOME/.themes/adw-gtk3" "$config/themes/adw-gtk3" \
+                   "/usr/local/share/themes/adw-gtk3" "/usr/share/themes/adw-gtk3"; do
+    if [[ -f "$candidate/gtk-3.0/gtk.css" && -f "$candidate/gtk-4.0/gtk.css" ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+ensure_imports(){
+  local file="$1"
+  [[ -f "$file" ]] || return 0
+  local tmp
+  tmp="$(mktemp)"
+  awk '$0 != "@import url(\"themy-colors.css\");" && $0 != "@import url(\"themy-widgets.css\");" {print}' "$file" > "$tmp"
+  printf '\n@import url("themy-colors.css");\n@import url("themy-widgets.css");\n' >> "$tmp"
+  mv -f "$tmp" "$file"
+}
+
+link_theme_css(){
+  local cfg_dir="$1" target="$2"
+  local css="$cfg_dir/gtk.css"
+  mkdir -p "$cfg_dir"
+  if [[ -L "$css" ]]; then
+    [[ "$(readlink -f "$css" 2>/dev/null || true)" == "$target" ]] || rm -f "$css"
+  elif [[ -f "$css" ]]; then
+    [[ -f "$css.themy-backup" ]] || cp -a "$css" "$css.themy-backup"
+    rm -f "$css"
+  fi
+  [[ -L "$css" ]] || ln -s "$target" "$css"
+}
+
+source="$(find_theme_source "$THEMY_MODE" || true)"
+
+if [[ "$THEMY_MODE" == dark ]]; then
+  theme_name="adw-gtk3-dark"
+else
+  theme_name="adw-gtk3"
+fi
+
+target_theme="$theme_root/$theme_name"
+mkdir -p "$theme_root"
+
+if [[ -n "$source" ]]; then
+  if [[ ! -f "$target_theme/gtk-3.0/gtk.css" || ! -f "$target_theme/gtk-4.0/gtk.css" ]]; then
+    rm -rf "$target_theme.tmp"
+    cp -a "$source" "$target_theme.tmp"
+    mv "$target_theme.tmp" "$target_theme"
+  fi
+else
+  mkdir -p "$target_theme/gtk-3.0" "$target_theme/gtk-4.0"
+  [[ -f "$target_theme/gtk-3.0/gtk.css" ]] || : > "$target_theme/gtk-3.0/gtk.css"
+  [[ -f "$target_theme/gtk-4.0/gtk.css" ]] || : > "$target_theme/gtk-4.0/gtk.css"
+fi
+
+if [[ ! -f "$target_theme/index.theme" ]]; then
+  cat > "$target_theme/index.theme" <<EOF
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=$theme_name
+Comment=Themy Matugen Material You theme
+Encoding=UTF-8
+
+[X-GNOME-Metatheme]
+GtkTheme=$theme_name
+MetacityTheme=$theme_name
+IconTheme=Adwaita
+EOF
+fi
+
+for v in 3.0 4.0; do
+  vdir="$target_theme/gtk-$v"
+  mkdir -p "$vdir"
+  cp -f "$THEMY_STAGE_DIR/themy-colors.css" "$vdir/themy-colors.css"
+  if [[ -f "$THEMY_STAGE_DIR/themy-widgets.css" ]]; then
+    cp -f "$THEMY_STAGE_DIR/themy-widgets.css" "$vdir/themy-widgets.css"
+  else
+    : > "$vdir/themy-widgets.css"
+  fi
+  ensure_imports "$vdir/gtk.css"
+  [[ -f "$vdir/gtk-dark.css" ]] && ensure_imports "$vdir/gtk-dark.css" || true
+
+  
+  mkdir -p "$config/gtk-$v"
+  cp -f "$THEMY_STAGE_DIR/themy-colors.css" "$config/gtk-$v/themy-colors.css"
+  if [[ -f "$THEMY_STAGE_DIR/themy-widgets.css" ]]; then
+    cp -f "$THEMY_STAGE_DIR/themy-widgets.css" "$config/gtk-$v/themy-widgets.css"
+  fi
+
+  link_theme_css "$config/gtk-$v" "$vdir/gtk.css"
+done
+
+if command -v gsettings >/dev/null 2>&1; then
+  gsettings set org.gnome.desktop.interface gtk-theme "$theme_name" 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface color-scheme "$([[ "$THEMY_MODE" == dark ]] && printf 'prefer-dark' || printf 'default')" 2>/dev/null || true
+fi

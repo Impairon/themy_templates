@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+src="$THEMY_MODULE_DIR/templates/${THEMY_MODE}.toml"
+"$THEMY_ROOT/internals/render-template.py" "$src" "$THEMY_STAGE_DIR/flavor.toml" "$THEMY_PALETTE"
+"$THEMY_ROOT/internals/render-template.py" "$THEMY_MODULE_DIR/templates/tmtheme.xml" "$THEMY_STAGE_DIR/tmtheme.xml" "$THEMY_PALETTE"
+printf 'ok\n' > "$THEMY_STAGE_DIR/.module-ok"

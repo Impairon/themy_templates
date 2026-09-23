@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>author</key>
+  <string>Themy</string>
+  <key>colorSpaceName</key>
+  <string>sRGB</string>
+  <key>name</key>
+  <string>Themy Wallpaper Theme</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>{{colors.background.default.hex}}</string>
+        <key>foreground</key>
+        <string>{{colors.on_background.default.hex}}</string>
+        <key>caret</key>
+        <string>{{colors.primary.default.hex}}</string>
+        <key>selection</key>
+        <string>{{colors.primary_container.default.hex}}66</string>
+        <key>selectionBorder</key>
+        <string>{{colors.primary.default.hex}}</string>
+        <key>findHighlight</key>
+        <string>{{colors.tertiary.default.hex}}</string>
+        <key>findHighlightForeground</key>
+        <string>{{colors.on_tertiary.default.hex}}</string>
+        <key>lineHighlight</key>
+        <string>{{colors.surface_container.default.hex}}66</string>
+        <key>gutterForeground</key>
+        <string>{{colors.on_surface_variant.default.hex}}</string>
+        <key>invisibles</key>
+        <string>{{colors.outline_variant.default.hex}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comments</string>
+      <key>scope</key>
+      <string>comment, comment.block.documentation, punctuation.definition.comment</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.on_surface_variant.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Strings</string>
+      <key>scope</key>
+      <string>string, constant.other.symbol, markup.heading</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.tertiary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Numbers and Constants</string>
+      <key>scope</key>
+      <string>constant.language, constant.numeric, support.constant, variable.other.constant</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.secondary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keywords</string>
+      <key>scope</key>
+      <string>keyword, keyword.control, storage.type, storage.modifier</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.primary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Operators</string>
+      <key>scope</key>
+      <string>keyword.operator, punctuation, entity.name.operator</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.secondary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Functions</string>
+      <key>scope</key>
+      <string>entity.name.function, meta.function-call, support.function</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.primary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Types and Classes</string>
+      <key>scope</key>
+      <string>entity.name.class, support.class, support.type, entity.other.inherited-class</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.tertiary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Tags and Markup</string>
+      <key>scope</key>
+      <string>entity.name.tag, meta.tag, markup.bold, markup.italic</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.error.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Variables</string>
+      <key>scope</key>
+      <string>variable, support.variable, variable.other.property</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.on_background.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Regular Expressions</string>
+      <key>scope</key>
+      <string>string.regexp, constant.regexp</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.tertiary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Inserted</string>
+      <key>scope</key>
+      <string>markup.inserted</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.tertiary.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Deleted and Invalid</string>
+      <key>scope</key>
+      <string>markup.deleted, invalid, invalid.illegal</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.error.default.hex}}</string></dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Changed and Deprecated</string>
+      <key>scope</key>
+      <string>markup.changed, invalid.deprecated</string>
+      <key>settings</key>
+      <dict><key>foreground</key><string>{{colors.secondary.default.hex}}</string></dict>
+    </dict>
+  </array>
+</dict>
+</plist>

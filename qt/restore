@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+restore(){
+  local d k s
+  d="$1"; k="$2"; s="$THEMY_BACKUP_DIR/$k"
+  if [[ -f "$THEMY_BACKUP_DIR/$k.missing" ]]; then rm -f "$d"
+  elif [[ -e "$s" || -L "$s" ]]; then mkdir -p "$(dirname "$d")"; rm -rf "$d"; cp -a "$s" "$d"; fi
+}
+c="$THEMY_XDG_CONFIG_HOME"
+restore "$c/qt5ct/qt5ct.conf" qt5-config; restore "$c/qt5ct/colors/themy.conf" qt5-colors; restore "$c/qt6ct/qt6ct.conf" qt6-config; restore "$c/qt6ct/colors/themy.conf" qt6-colors; restore "$c/environment.d/themy.conf" env

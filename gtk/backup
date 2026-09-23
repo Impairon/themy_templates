@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+save(){
+  local s="$1" k="$2"
+  if [[ -e "$s" || -L "$s" ]]; then
+    cp -L "$s" "$THEMY_BACKUP_DIR/$k"
+  else
+    : > "$THEMY_BACKUP_DIR/$k.missing"
+  fi
+}
+save_dir(){
+  local s="$1" k="$2"
+  if [[ -d "$s" ]]; then
+    cp -a "$s" "$THEMY_BACKUP_DIR/$k"
+  else
+    : > "$THEMY_BACKUP_DIR/$k.missing"
+  fi
+}
+c="$THEMY_XDG_CONFIG_HOME"; d="$THEMY_XDG_DATA_HOME"
+save "$c/gtk-3.0/gtk.css" gtk3-css
+save "$c/gtk-3.0/themy-colors.css" gtk3-colors
+save "$c/gtk-4.0/gtk.css" gtk4-css
+save "$c/gtk-4.0/themy-colors.css" gtk4-colors
+save_dir "$d/themes/adw-gtk3" theme-adw
+save_dir "$d/themes/adw-gtk3-dark" theme-adw-dark
+save_dir "$d/themes/themy" theme-light
+save_dir "$d/themes/themy-dark" theme-dark

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+save_path(){
+  local src="$1" key="$2"
+  if [[ -e "$src" || -L "$src" ]]; then
+    cp -a -- "$src" "$THEMY_BACKUP_DIR/$key"
+  else
+    : > "$THEMY_BACKUP_DIR/$key.missing"
+  fi
+}
+
+root="${YAZI_CONFIG_HOME:-$THEMY_XDG_CONFIG_HOME/yazi}"
+save_path "$root/theme.toml" theme
+save_path "$root/flavors/themy.yazi" flavor

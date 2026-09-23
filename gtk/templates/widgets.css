@@ -1,0 +1,272 @@
+/*
+ * Themy GTK widget layer
+ *
+ * This file is intentionally separate from themy-colors.css.
+ * Matugen owns the semantic palette; this file only tells GTK widgets
+ * how to consume those roles. It is imported after adw-gtk3 and after
+ * themy-colors.css so static theme gradients/colors cannot win.
+ */
+
+/* -------------------------------------------------------------------------
+ * Core widget surface
+ * ------------------------------------------------------------------------- */
+button,
+.button,
+toolbutton > button,
+toolbar button,
+headerbar button,
+headerbar .button {
+  color: @window_fg_color;
+  background-color: @card_bg_color;
+  background-image: none;
+  border-color: @unfocused_borders;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+button:hover,
+.button:hover,
+toolbutton > button:hover,
+toolbar button:hover,
+headerbar button:hover,
+headerbar .button:hover {
+  color: @window_fg_color;
+  background-color: @headerbar_bg_color;
+  background-image: none;
+  border-color: @borders;
+  box-shadow: none;
+}
+
+button:active,
+button:checked,
+.button:active,
+.button:checked,
+toolbutton > button:active,
+toolbutton > button:checked,
+toolbar button:active,
+toolbar button:checked {
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
+  background-image: none;
+  border-color: @accent_bg_color;
+  box-shadow: none;
+}
+
+button:focus,
+.button:focus,
+entry:focus,
+spinbutton:focus,
+combobox:focus {
+  border-color: @accent_color;
+  box-shadow: 0 0 0 1px @accent_color;
+}
+
+button:disabled,
+.button:disabled {
+  color: @insensitive_fg_color;
+  background-color: @insensitive_bg_color;
+  background-image: none;
+  border-color: @insensitive_borders;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Semantic action buttons
+ * ------------------------------------------------------------------------- */
+button.suggested-action,
+.button.suggested-action {
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
+  background-image: none;
+  border-color: @accent_bg_color;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+button.suggested-action:hover,
+.button.suggested-action:hover {
+  color: @accent_fg_color;
+  background-color: @theme_selected_bg_color;
+  background-image: none;
+  border-color: @theme_selected_bg_color;
+}
+
+button.destructive-action,
+.button.destructive-action {
+  color: @destructive_fg_color;
+  background-color: @destructive_bg_color;
+  background-image: none;
+  border-color: @destructive_bg_color;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+button.destructive-action:hover,
+.button.destructive-action:hover {
+  color: @destructive_fg_color;
+  background-color: @error_bg_color;
+  background-image: none;
+  border-color: @error_bg_color;
+}
+
+/* Flat buttons should remain flat, but still use Themy's text/focus colors. */
+button.flat,
+.button.flat {
+  color: @window_fg_color;
+  background-color: transparent;
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+button.flat:hover,
+.button.flat:hover {
+  color: @window_fg_color;
+  background-color: @surface_container_high;
+  background-image: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Text fields / combo boxes / spin buttons
+ * ------------------------------------------------------------------------- */
+entry,
+spinbutton,
+combobox entry,
+.combo {
+  color: @view_fg_color;
+  background-color: @view_bg_color;
+  background-image: none;
+  border-color: @unfocused_borders;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+entry:focus,
+spinbutton:focus,
+combobox entry:focus,
+.combo:focus {
+  color: @view_fg_color;
+  background-color: @view_bg_color;
+  background-image: none;
+  border-color: @accent_color;
+  box-shadow: 0 0 0 1px @accent_color;
+}
+
+combobox button,
+.combo button,
+spinbutton button {
+  color: @window_fg_color;
+  background-color: @card_bg_color;
+  background-image: none;
+  border-color: @unfocused_borders;
+  box-shadow: none;
+}
+
+combobox button:hover,
+.combo button:hover,
+spinbutton button:hover {
+  background-color: @surface_container_high;
+  background-image: none;
+  border-color: @borders;
+}
+
+/* -------------------------------------------------------------------------
+ * Check/radio controls and scales
+ * ------------------------------------------------------------------------- */
+checkbutton check,
+radiobutton radio {
+  color: @window_fg_color;
+  background-color: @view_bg_color;
+  border-color: @borders;
+}
+
+checkbutton:checked check,
+radiobutton:checked radio {
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
+  border-color: @accent_bg_color;
+}
+
+scale trough {
+  background-color: @surface_container_high;
+  background-image: none;
+  border-color: @unfocused_borders;
+}
+
+scale highlight,
+scale fill {
+  background-color: @accent_color;
+  background-image: none;
+}
+
+scale slider {
+  background-color: @accent_bg_color;
+  background-image: none;
+  border-color: @accent_color;
+  box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Menus / popovers / dialogs
+ * ------------------------------------------------------------------------- */
+menu,
+.menu,
+popover,
+popover.background,
+messagedialog,
+dialog {
+  color: @window_fg_color;
+  background-color: @popover_bg_color;
+  background-image: none;
+  border-color: @borders;
+}
+
+menu menuitem:hover,
+.menu menuitem:hover,
+popover modelbutton:hover,
+popover button:hover {
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
+  background-image: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Selection / views / lists
+ * ------------------------------------------------------------------------- */
+view,
+.view,
+treeview,
+textview text,
+iconview {
+  color: @view_fg_color;
+  background-color: @view_bg_color;
+}
+
+view:selected,
+.view:selected,
+treeview:selected,
+iconview:selected {
+  color: @theme_selected_fg_color;
+  background-color: @theme_selected_bg_color;
+}
+
+/* -------------------------------------------------------------------------
+ * Scrollbars
+ * ------------------------------------------------------------------------- */
+scrollbar trough {
+  background-color: @view_bg_color;
+  background-image: none;
+}
+
+scrollbar slider {
+  background-color: @surface_container_high;
+  background-image: none;
+  border-color: @outline_variant;
+  box-shadow: none;
+}
+
+scrollbar slider:hover {
+  background-color: @surface_container_highest;
+  background-image: none;
+}

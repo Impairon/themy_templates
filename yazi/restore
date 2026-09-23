@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+restore_path(){
+  local dst="$1" key="$2"
+  local src="$THEMY_BACKUP_DIR/$key"
+  if [[ -f "$THEMY_BACKUP_DIR/$key.missing" ]]; then
+    rm -rf -- "$dst"
+  elif [[ -e "$src" || -L "$src" ]]; then
+    mkdir -p "$(dirname "$dst")"
+    rm -rf -- "$dst"
+    cp -a -- "$src" "$dst"
+  fi
+}
+
+root="${YAZI_CONFIG_HOME:-$THEMY_XDG_CONFIG_HOME/yazi}"
+restore_path "$root/theme.toml" theme
+restore_path "$root/flavors/themy.yazi" flavor

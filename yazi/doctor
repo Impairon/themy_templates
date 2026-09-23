@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if command -v yazi >/dev/null 2>&1; then printf '  OK   %-14s %s\n' Yazi "$(command -v yazi)"; else printf '  INFO %-14s yazi not installed\n' Yazi; fi

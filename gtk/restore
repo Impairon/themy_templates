@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+restore(){
+  local d k s
+  d="$1"; k="$2"; s="$THEMY_BACKUP_DIR/$k"
+  if [[ -f "$THEMY_BACKUP_DIR/$k.missing" ]]; then
+    rm -rf "$d"
+  elif [[ -e "$s" ]]; then
+    mkdir -p "$(dirname "$d")"
+    rm -rf "$d"
+    cp -a "$s" "$d"
+  fi
+}
+c="$THEMY_XDG_CONFIG_HOME"; d="$THEMY_XDG_DATA_HOME"
+restore "$c/gtk-3.0/gtk.css" gtk3-css
+restore "$c/gtk-3.0/themy-colors.css" gtk3-colors
+restore "$c/gtk-4.0/gtk.css" gtk4-css
+restore "$c/gtk-4.0/themy-colors.css" gtk4-colors
+restore "$d/themes/adw-gtk3" theme-adw
+restore "$d/themes/adw-gtk3-dark" theme-adw-dark
+restore "$d/themes/themy" theme-light
+restore "$d/themes/themy-dark" theme-dark
