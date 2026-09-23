@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v kitty >/dev/null 2>&1; then
+    printf 'Kitty executable not found\n' >&2
+    exit 1
+fi
+
+root="${KITTY_CONFIG_DIRECTORY:-${THEMY_XDG_CONFIG_HOME:-$HOME/.config}/kitty}"
+printf 'Kitty config directory: %s\n' "$root"
+if [[ -f "$root/kitty.conf" ]]; then
+    printf 'kitty.conf: found\n'
+else
+    printf 'kitty.conf: not found\n' >&2
+fi
+
+if [[ -f "$root/theme.conf" ]]; then
+    printf 'Themy theme: found\n'
+else
+    printf 'Themy theme: not applied yet\n'
+fi
